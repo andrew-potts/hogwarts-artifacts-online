@@ -1,31 +1,24 @@
 package edu.tcu.cs.hogwartsartifactsonline.artifact;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import edu.tcu.cs.hogwartsartifactsonline.artifact.dto.ArtifactDto;
 import edu.tcu.cs.hogwartsartifactsonline.system.StatusCode;
-
 import edu.tcu.cs.hogwartsartifactsonline.system.exception.ObjectNotFoundException;
-
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-
 
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
@@ -41,7 +34,7 @@ class ArtifactControllerTest {
     @Autowired
     MockMvc mockMvc;
 
-    @MockitoBean
+    @MockBean
     ArtifactService artifactService;
 
     @Autowired
@@ -49,8 +42,9 @@ class ArtifactControllerTest {
 
     List<Artifact> artifacts;
 
-    @Value("${api.endpoint.base-url}")
+    @Value("${api.endpoint.base-url}") // Spring will go to application.yml to find the value and inject into this field.
     String baseUrl;
+
 
     @BeforeEach
     void setUp() {
@@ -146,6 +140,7 @@ class ArtifactControllerTest {
                 .andExpect(jsonPath("$.data[1].id").value("1250808601744904192"))
                 .andExpect(jsonPath("$.data[1].name").value("Invisibility Cloak"));
     }
+
     @Test
     void testAddArtifactSuccess() throws Exception {
         // Given
@@ -174,6 +169,7 @@ class ArtifactControllerTest {
                 .andExpect(jsonPath("$.data.description").value(savedArtifact.getDescription()))
                 .andExpect(jsonPath("$.data.imageUrl").value(savedArtifact.getImageUrl()));
     }
+
     @Test
     void testUpdateArtifactSuccess() throws Exception {
         // Given
@@ -223,7 +219,9 @@ class ArtifactControllerTest {
                 .andExpect(jsonPath("$.data").isEmpty());
     }
 
+    @Test
     void testDeleteArtifactSuccess() throws Exception {
+        // Given
         doNothing().when(this.artifactService).delete("1250808601744904191");
 
         // When and then
@@ -246,4 +244,5 @@ class ArtifactControllerTest {
                 .andExpect(jsonPath("$.message").value("Could not find artifact with Id 1250808601744904191 :("))
                 .andExpect(jsonPath("$.data").isEmpty());
     }
+
 }

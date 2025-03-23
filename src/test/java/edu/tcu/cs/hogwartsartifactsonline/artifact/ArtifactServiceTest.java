@@ -22,16 +22,17 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
+// For JUnit 5, we need to use @ExtendWith.
 @ExtendWith(MockitoExtension.class)
 class ArtifactServiceTest {
 
-    @Mock
+    @Mock // @Mock defines a Mockito mock object for ArtifactRepository.
     ArtifactRepository artifactRepository;
 
     @Mock
     IdWorker idWorker;
 
-    @InjectMocks
+    @InjectMocks // The Mockito mock objects for ArtifactRepository and IdWorker will be injected into artifactService.
     ArtifactService artifactService;
 
     List<Artifact> artifacts;
@@ -62,7 +63,7 @@ class ArtifactServiceTest {
 
     @Test
     void testFindByIdSuccess() {
-        // Given
+        // Given. Arrange inputs and targets. Define the behavior of Mock object artifactRepository.
         /*
         "id": "1250808601744904192",
         "name": "Invisibility Cloak",
@@ -83,17 +84,17 @@ class ArtifactServiceTest {
 
         given(this.artifactRepository.findById("1250808601744904192")).willReturn(Optional.of(a)); // Define the behavior of the mock object.
 
-        // When.
+        // When. Act on the target behavior. When steps should cover the method to be tested.
         Artifact returnedArtifact = this.artifactService.findById("1250808601744904192");
 
-        // Then.
+        // Then. Assert expected outcomes.
         assertThat(returnedArtifact.getId()).isEqualTo(a.getId());
         assertThat(returnedArtifact.getName()).isEqualTo(a.getName());
         assertThat(returnedArtifact.getDescription()).isEqualTo(a.getDescription());
         assertThat(returnedArtifact.getImageUrl()).isEqualTo(a.getImageUrl());
         assertThat(returnedArtifact.getOwner()).isNotNull();
 
-
+        // Verify artifactRepository.findById() is called exactly once with "1250808601744904192".
         verify(this.artifactRepository, times(1)).findById("1250808601744904192");
     }
 
@@ -110,7 +111,7 @@ class ArtifactServiceTest {
         // Then
         assertThat(thrown)
                 .isInstanceOf(ObjectNotFoundException.class)
-                .hasMessage("Could not find artifact with id 1250808601744904192 :(");
+                .hasMessage("Could not find artifact with Id 1250808601744904192 :(");
         verify(this.artifactRepository, times(1)).findById("1250808601744904192");
     }
 
