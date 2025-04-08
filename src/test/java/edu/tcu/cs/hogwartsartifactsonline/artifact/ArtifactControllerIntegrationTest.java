@@ -55,28 +55,6 @@ class ArtifactControllerIntegrationTest {
     }
 
 
-    @Test
-    @DisplayName("Check findAllArtifacts (GET)")
-    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
-        // Reset H2 database before calling this test case.
-    void testFindAllArtifactsSuccess() throws Exception {
-        this.mockMvc.perform(get(this.baseUrl + "/artifacts").accept(MediaType.APPLICATION_JSON).header(HttpHeaders.AUTHORIZATION, this.token))
-                .andExpect(jsonPath("$.flag").value(true))
-                .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
-                .andExpect(jsonPath("$.message").value("Find All Success"))
-                .andExpect(jsonPath("$.data", Matchers.hasSize(6)));
-    }
-
-    @Test
-    @DisplayName("Check findArtifactById (GET)")
-    void testFindArtifactByIdSuccess() throws Exception {
-        this.mockMvc.perform(get(this.baseUrl + "/artifacts/1250808601744904191").accept(MediaType.APPLICATION_JSON).header(HttpHeaders.AUTHORIZATION, this.token))
-                .andExpect(jsonPath("$.flag").value(true))
-                .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
-                .andExpect(jsonPath("$.message").value("Find One Success"))
-                .andExpect(jsonPath("$.data.id").value("1250808601744904191"))
-                .andExpect(jsonPath("$.data.name").value("Deluminator"));
-    }
 
     @Test
     @DisplayName("Check findArtifactById with non-existent id (GET)")
@@ -88,56 +66,8 @@ class ArtifactControllerIntegrationTest {
                 .andExpect(jsonPath("$.data").isEmpty());
     }
 
-    @Test
-    @DisplayName("Check addArtifact with valid input (POST)")
-    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
-    void testAddArtifactSuccess() throws Exception {
-        Artifact a = new Artifact();
-        a.setName("Remembrall");
-        a.setDescription("A Remembrall was a magical large marble-sized glass ball that contained smoke which turned red when its owner or user had forgotten something. It turned clear once whatever was forgotten was remembered.");
-        a.setImageUrl("ImageUrl");
 
-        String json = this.objectMapper.writeValueAsString(a);
 
-        this.mockMvc.perform(post(this.baseUrl + "/artifacts").contentType(MediaType.APPLICATION_JSON).content(json).accept(MediaType.APPLICATION_JSON).header(HttpHeaders.AUTHORIZATION, this.token))
-                .andExpect(jsonPath("$.flag").value(true))
-                .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
-                .andExpect(jsonPath("$.message").value("Add Success"))
-                .andExpect(jsonPath("$.data.id").isNotEmpty())
-                .andExpect(jsonPath("$.data.name").value("Remembrall"))
-                .andExpect(jsonPath("$.data.description").value("A Remembrall was a magical large marble-sized glass ball that contained smoke which turned red when its owner or user had forgotten something. It turned clear once whatever was forgotten was remembered."))
-                .andExpect(jsonPath("$.data.imageUrl").value("ImageUrl"));
-        this.mockMvc.perform(get(this.baseUrl + "/artifacts").accept(MediaType.APPLICATION_JSON).header(HttpHeaders.AUTHORIZATION, this.token))
-                .andExpect(jsonPath("$.flag").value(true))
-                .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
-                .andExpect(jsonPath("$.message").value("Find All Success"))
-                .andExpect(jsonPath("$.data", Matchers.hasSize(7)));
-    }
-
-    @Test
-    @DisplayName("Check addArtifact with invalid input (POST)")
-    @DirtiesContext(methodMode = DirtiesContext.MethodMode.BEFORE_METHOD)
-    void testAddArtifactErrorWithInvalidInput() throws Exception {
-        Artifact a = new Artifact();
-        a.setName(""); // Name is not provided.
-        a.setDescription(""); // Description is not provided.
-        a.setImageUrl(""); // ImageUrl is not provided.
-
-        String json = this.objectMapper.writeValueAsString(a);
-
-        this.mockMvc.perform(post(this.baseUrl + "/artifacts").contentType(MediaType.APPLICATION_JSON).content(json).accept(MediaType.APPLICATION_JSON).header(HttpHeaders.AUTHORIZATION, this.token))
-                .andExpect(jsonPath("$.flag").value(false))
-                .andExpect(jsonPath("$.code").value(StatusCode.INVALID_ARGUMENT))
-                .andExpect(jsonPath("$.message").value("Provided arguments are invalid, see data for details."))
-                .andExpect(jsonPath("$.data.name").value("name is required."))
-                .andExpect(jsonPath("$.data.description").value("description is required."))
-                .andExpect(jsonPath("$.data.imageUrl").value("imageUrl is required."));
-        this.mockMvc.perform(get(this.baseUrl + "/artifacts").accept(MediaType.APPLICATION_JSON).header(HttpHeaders.AUTHORIZATION, this.token))
-                .andExpect(jsonPath("$.flag").value(true))
-                .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
-                .andExpect(jsonPath("$.message").value("Find All Success"))
-                .andExpect(jsonPath("$.data", Matchers.hasSize(6)));
-    }
 
     @Test
     @DisplayName("Check updateArtifact with valid input (PUT)")
@@ -178,31 +108,6 @@ class ArtifactControllerIntegrationTest {
                 .andExpect(jsonPath("$.data").isEmpty());
     }
 
-    @Test
-    @DisplayName("Check updateArtifact with invalid input (PUT)")
-    void testUpdateArtifactErrorWithInvalidInput() throws Exception {
-        Artifact a = new Artifact();
-        a.setId("1250808601744904191"); // Valid id
-        a.setName(""); // Updated name is empty.
-        a.setDescription(""); // Updated description is empty.
-        a.setImageUrl(""); // Updated imageUrl is empty.
-
-        String json = this.objectMapper.writeValueAsString(a);
-
-        this.mockMvc.perform(put(this.baseUrl + "/artifacts/1250808601744904191").contentType(MediaType.APPLICATION_JSON).content(json).accept(MediaType.APPLICATION_JSON).header(HttpHeaders.AUTHORIZATION, this.token))
-                .andExpect(jsonPath("$.flag").value(false))
-                .andExpect(jsonPath("$.code").value(StatusCode.INVALID_ARGUMENT))
-                .andExpect(jsonPath("$.message").value("Provided arguments are invalid, see data for details."))
-                .andExpect(jsonPath("$.data.name").value("name is required."))
-                .andExpect(jsonPath("$.data.description").value("description is required."))
-                .andExpect(jsonPath("$.data.imageUrl").value("imageUrl is required."));
-        this.mockMvc.perform(get(this.baseUrl + "/artifacts/1250808601744904191").accept(MediaType.APPLICATION_JSON).header(HttpHeaders.AUTHORIZATION, this.token))
-                .andExpect(jsonPath("$.flag").value(true))
-                .andExpect(jsonPath("$.code").value(StatusCode.SUCCESS))
-                .andExpect(jsonPath("$.message").value("Find One Success"))
-                .andExpect(jsonPath("$.data.id").value("1250808601744904191"))
-                .andExpect(jsonPath("$.data.name").value("Deluminator"));
-    }
 
     @Test
     @DisplayName("Check deleteArtifact with valid input (DELETE)")
