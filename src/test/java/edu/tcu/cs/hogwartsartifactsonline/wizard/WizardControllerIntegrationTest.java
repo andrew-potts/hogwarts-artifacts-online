@@ -106,7 +106,6 @@ class WizardControllerIntegrationTest {
     }
 
 
-
     @Test
     @DisplayName("Check updateWizard with valid input (PUT)")
     void testUpdateWizardSuccess() throws Exception {
@@ -139,7 +138,6 @@ class WizardControllerIntegrationTest {
                 .andExpect(jsonPath("$.message").value("Could not find wizard with Id 5 :("))
                 .andExpect(jsonPath("$.data").isEmpty());
     }
-
 
 
     @Test
