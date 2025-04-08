@@ -125,7 +125,6 @@ class ArtifactControllerTest {
     }
 
 
-
     @Test
     void testUpdateArtifactSuccess() throws Exception {
         // Given

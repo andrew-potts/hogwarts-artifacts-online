@@ -55,7 +55,6 @@ class ArtifactControllerIntegrationTest {
     }
 
 
-
     @Test
     @DisplayName("Check findArtifactById with non-existent id (GET)")
     void testFindArtifactByIdNotFound() throws Exception {
@@ -65,8 +64,6 @@ class ArtifactControllerIntegrationTest {
                 .andExpect(jsonPath("$.message").value("Could not find artifact with Id 1250808601744904199 :("))
                 .andExpect(jsonPath("$.data").isEmpty());
     }
-
-
 
 
     @Test
